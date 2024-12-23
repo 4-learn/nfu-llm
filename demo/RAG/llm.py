@@ -1,18 +1,38 @@
 import os
 from phi.agent import Agent
 from phi.model.openai import OpenAIChat
-import paho.mqtt.client as mqtt
+# import paho.mqtt.client as mqtt
 from weather import fetch_weather_data
 
 # OpenAI API 設定 (請替換為您的 API Key)
 # os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+
+def introduce_self():
+    """自我介紹"""
+    return """
+    大家好！我是一個智能助理，我可以：
+    1. 自我介紹
+    2. 搜尋新聞
+    
+    您可以對我說「搜尋一下 LLM 目前的新聞」或類似的指令，我會幫您完成操作！
+    """
+
+intro_agent = Agent(
+    name="Introduction Agent",
+    role="進行自我介紹",
+    instructions=[
+        "1. 使用 introduce_self 工具進行自我介紹",
+        "2. 提供友善且專業的介紹"
+    ],
+    tools=[introduce_self]
+)
 
 def get_weather():
     """取得台北市的天氣資訊"""
     return fetch_weather_data("台北市")
 
 
-intro_agent = Agent(
+weather_agent = Agent(
     name="Get Taipei weather Agent",
     role="取得台北市的天氣資訊",
     instructions=[
@@ -26,7 +46,7 @@ intro_agent = Agent(
 agent_team = Agent(
     model=OpenAIChat(id="gpt-4o"),
     name="智能助理團隊",
-    team=[intro_agent],
+    team=[weather_agent, intro_agent],
     instructions=[
         "1. 識別用戶需求選擇合適的 agent",
         "2. 立即執行相應操作",
