@@ -1,7 +1,6 @@
 import os
 from phi.agent import Agent
 from phi.model.openai import OpenAIChat
-import paho.mqtt.client as mqtt
 from weather import fetch_weather_data
 
 # OpenAI API 設定 (請替換為您的 API Key)
